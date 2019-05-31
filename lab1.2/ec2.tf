@@ -2,37 +2,21 @@
 resource "aws_instance" "wb" {
    ami  = "${var.ami}"
    instance_type = "t2.micro"
-   key_name = "${aws_key_pair.default.id}"
+   key_name = "${var.key_name}"
    subnet_id = "${aws_subnet.public-subnet.id}"
    vpc_security_group_ids = ["${aws_security_group.sgweb.id}"]
    associate_public_ip_address = true
    source_dest_check = false
    user_data = "${file("install.sh")}"
-   count     = 1
+   count     = 2
   tags {
-    Name = "webserver-1"
+    Name = "webserver${count.index}"
   }
 }
-
-resource "aws_instance" "wb1" {
-   ami  = "${var.ami}"
-   instance_type = "t2.micro"
-   key_name = "${aws_key_pair.default.id}"
-   subnet_id = "${aws_subnet.public-subnet.id}"
-   vpc_security_group_ids = ["${aws_security_group.sgweb.id}"]
-   associate_public_ip_address = true
-   source_dest_check = false
-   user_data = "${file("install.sh")}"
-   count     = 1
-  tags {
-    Name = "webserver-${count.index + 2}"
-  }
-}
-
 resource "aws_instance" "db" {
    ami  = "${var.ami}"
    instance_type = "t2.micro"
-   key_name = "${aws_key_pair.default.id}"
+   key_name = "${var.key_name}"
    subnet_id = "${aws_subnet.private-subnet.id}"
    vpc_security_group_ids = ["${aws_security_group.sgdb.id}"]
    source_dest_check = false
